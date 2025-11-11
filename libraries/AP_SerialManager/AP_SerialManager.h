@@ -27,30 +27,32 @@
 
 #include <AP_Param/AP_Param.h>
 
-class AP_SerialManager {
+class AP_SerialManager
+{
 public:
     AP_SerialManager();
 
     /* Do not allow copies */
     CLASS_NO_COPY(AP_SerialManager);
 
-    enum SerialProtocol {
+    enum SerialProtocol
+    {
         SerialProtocol_None = -1,
         SerialProtocol_Console = 0, // unused
         SerialProtocol_MAVLink = 1,
-        SerialProtocol_MAVLink2 = 2,                 // do not use - use MAVLink and provide instance of 1
-        SerialProtocol_FrSky_D = 3,                  // FrSky D protocol (D-receivers)
-        SerialProtocol_FrSky_SPort = 4,              // FrSky SPort protocol (X-receivers)
+        SerialProtocol_MAVLink2 = 2,    // do not use - use MAVLink and provide instance of 1
+        SerialProtocol_FrSky_D = 3,     // FrSky D protocol (D-receivers)
+        SerialProtocol_FrSky_SPort = 4, // FrSky SPort protocol (X-receivers)
         SerialProtocol_GPS = 5,
-        SerialProtocol_GPS2 = 6,                     // do not use - use GPS and provide instance of 1
+        SerialProtocol_GPS2 = 6, // do not use - use GPS and provide instance of 1
         SerialProtocol_AlexMos = 7,
-        SerialProtocol_Gimbal = 8,                   // SToRM32, Siyi custom serial protocols
+        SerialProtocol_Gimbal = 8, // SToRM32, Siyi custom serial protocols
         SerialProtocol_Rangefinder = 9,
         SerialProtocol_FrSky_SPort_Passthrough = 10, // FrSky SPort Passthrough (OpenTX) protocol (X-receivers)
         SerialProtocol_Lidar360 = 11,                // Lightware SF40C, TeraRanger Tower or RPLidarA2
-        SerialProtocol_Aerotenna_USD1      = 12, // USD1 support - deprecated, users should use Rangefinder
+        SerialProtocol_Aerotenna_USD1 = 12,          // USD1 support - deprecated, users should use Rangefinder
         SerialProtocol_Beacon = 13,
-        SerialProtocol_Volz = 14,                    // Volz servo protocol
+        SerialProtocol_Volz = 14, // Volz servo protocol
         SerialProtocol_Sbus1 = 15,
         SerialProtocol_ESCTelemetry = 16,
         SerialProtocol_Devo_Telem = 17,
@@ -60,7 +62,7 @@ public:
         SerialProtocol_WindVane = 21,
         SerialProtocol_SLCAN = 22,
         SerialProtocol_RCIN = 23,
-        SerialProtocol_EFI = 24,                   // EFI serial protocol
+        SerialProtocol_EFI = 24, // EFI serial protocol
         SerialProtocol_LTM_Telem = 25,
         SerialProtocol_RunCam = 26,
         SerialProtocol_Hott = 27,
@@ -85,12 +87,14 @@ public:
         SerialProtocol_IMUOUT = 46,
         // Reserving Serial Protocol 47 for SerialProtocol_IQ
         SerialProtocol_PPP = 48,
-        SerialProtocol_IBUS_Telem = 49,                // i-BUS telemetry data, ie via sensor port of FS-iA6B
-        SerialProtocol_NumProtocols                    // must be the last value
+        SerialProtocol_IBUS_Telem = 49, // i-BUS telemetry data, ie via sensor port of FS-iA6B
+        SerialProtocol_HFC = 50,
+        SerialProtocol_NumProtocols // must be the last value
     };
 
     // get singleton instance
-    static AP_SerialManager *get_singleton(void) {
+    static AP_SerialManager *get_singleton(void)
+    {
         return _singleton;
     }
 
@@ -108,7 +112,7 @@ public:
 
     // have_serial - return true if we have the corresponding serial protocol configured
     bool have_serial(enum SerialProtocol protocol, uint8_t instance) const;
-    
+
     // find_baudrate - searches available serial ports for the first instance that allows the given protocol
     //  instance should be zero if searching for the first instance, 1 for the second, etc
     //  returns the baudrate of that protocol on success, 0 if a serial port cannot be found
@@ -135,18 +139,23 @@ public:
     // parameter var table
     static const struct AP_Param::GroupInfo var_info[];
 
-    class UARTState {
+    class UARTState
+    {
         friend class AP_SerialManager;
+
     public:
-        bool option_enabled(uint16_t option) const {
+        bool option_enabled(uint16_t option) const
+        {
             return (options & option) == option;
         }
         // returns a baudrate such as 9600.  May map from a special
         // parameter value like "57" to "57600":
-        uint32_t baudrate() const {
+        uint32_t baudrate() const
+        {
             return AP_SerialManager::map_baudrate(baud);
         }
-        AP_SerialManager::SerialProtocol get_protocol() const {
+        AP_SerialManager::SerialProtocol get_protocol() const
+        {
             return AP_SerialManager::SerialProtocol(protocol.get());
         }
         AP_Int32 baud;
@@ -173,9 +182,10 @@ public:
       a class for a externally registered port
       used by AP_Networking
      */
-    class RegisteredPort : public AP_HAL::UARTDriver {
+    class RegisteredPort : public AP_HAL::UARTDriver
+    {
     public:
-        uint32_t bw_in_bytes_per_second() const override { return state.baudrate()/10; }
+        uint32_t bw_in_bytes_per_second() const override { return state.baudrate() / 10; }
         uint32_t get_baud_rate() const override { return state.baudrate(); }
         RegisteredPort *next;
         UARTState state;
@@ -187,7 +197,6 @@ public:
     void register_port(RegisteredPort *port);
 
 #endif // AP_SERIALMANAGER_REGISTER_ENABLED
-
 
 private:
     static AP_SerialManager *_singleton;
@@ -210,8 +219,9 @@ private:
     bool init_console_done;
 };
 
-namespace AP {
+namespace AP
+{
     AP_SerialManager &serialmanager();
 };
 
-#endif  // AP_SERIALMANAGER_ENABLED
+#endif // AP_SERIALMANAGER_ENABLED

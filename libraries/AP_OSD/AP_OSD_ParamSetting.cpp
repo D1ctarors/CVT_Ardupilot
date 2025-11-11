@@ -97,8 +97,7 @@ const AP_Param::GroupInfo AP_OSD_ParamSetting::var_info[] = {
     // @User: Standard
     AP_GROUPINFO_FLAGS_DEFAULT_POINTER("_TYPE", 10, AP_OSD_ParamSetting, _type, default_type),
 
-    AP_GROUPEND
-};
+    AP_GROUPEND};
 
 #if HAL_GCS_ENABLED
 // ensure that our OSD_PARAM type enumeration is 1:1 with the mavlink
@@ -119,32 +118,35 @@ static_assert((uint32_t)AP_OSD_ParamSetting::Type::FAILSAFE_ACTION == (uint32_t)
 static_assert((uint32_t)AP_OSD_ParamSetting::Type::FAILSAFE_ACTION_1 == (uint32_t)OSD_PARAM_FAILSAFE_ACTION_1, "OSD_PARAM_FAILSAFE_ACTION_1 incorrect");
 static_assert((uint32_t)AP_OSD_ParamSetting::Type::FAILSAFE_ACTION_2 == (uint32_t)OSD_PARAM_FAILSAFE_ACTION_2, "OSD_PARAM_FAILSAFE_ACTION_2 incorrect");
 static_assert((uint32_t)AP_OSD_ParamSetting::Type::NUM_TYPES == (uint32_t)AP_OSD_ParamSetting::Type::NUM_TYPES, "AP_OSD_ParamSetting::Type::NUM_TYPES incorrect");
-#endif  // HAL_GCS_ENABLED
+#endif // HAL_GCS_ENABLED
 
 #define PARAM_COMPOSITE_INDEX(key, idx, group) (uint32_t((uint32_t(key) << 23) | (uint32_t(idx) << 18) | uint32_t(group)))
 
 #define OSD_PARAM_DEBUG 0
 #if OSD_PARAM_DEBUG
-#define debug(fmt, args ...) do { hal.console->printf("OSD: " fmt, args); } while (0)
+#define debug(fmt, args...)                     \
+    do                                          \
+    {                                           \
+        hal.console->printf("OSD: " fmt, args); \
+    } while (0)
 #else
-#define debug(fmt, args ...)
+#define debug(fmt, args...)
 #endif
 
 // at the cost of a little flash, we can create much better ranges and values for certain important settings
 // common labels - all strings must be upper case
 #if APM_BUILD_TYPE(APM_BUILD_ArduPlane) || APM_BUILD_COPTER_OR_HELI
 
-static const char* SERIAL_PROTOCOL_VALUES[] = {
-    "", "MAV", "MAV2", "FSKY_D", "FSKY_S", "GPS", "", "ALEX", "STORM", "RNG", 
+static const char *SERIAL_PROTOCOL_VALUES[] = {
+    "", "MAV", "MAV2", "FSKY_D", "FSKY_S", "GPS", "", "ALEX", "STORM", "RNG",
     "FSKY_TX", "LID360", "", "BEACN", "VOLZ", "SBUS", "ESC_TLM", "DEV_TLM", "OPTFLW", "RBTSRV",
     "NMEA", "WNDVNE", "SLCAN", "RCIN", "MGSQRT", "LTM", "RUNCAM", "HOT_TLM", "SCRIPT", "CRSF",
     "GEN", "WNCH", "MSP", "DJI", "AIRSPD", "ADSB", "AHRS", "AUDIO", "FETTEC", "TORQ",
-    "AIS", "CD_ESC", "MSP_DP", "MAV_HL", "TRAMP", "DDS", "IMUOUT", "IQ", "PPP", "IBUS_TLM"
-};
+    "AIS", "CD_ESC", "MSP_DP", "MAV_HL", "TRAMP", "DDS", "IMUOUT", "IQ", "PPP", "IBUS_TLM", "HYDROGEN"};
 static_assert(AP_SerialManager::SerialProtocol_NumProtocols == ARRAY_SIZE(SERIAL_PROTOCOL_VALUES), "Wrong size SerialProtocol_NumProtocols");
 
-static const char* SERVO_FUNCTIONS[] = {
-    "NONE", "RCPASS", "FLAP", "FLAP_AUTO", "AIL", "", "MNT_PAN", "MNT_TLT", "MNT_RLL", "MNT_OPEN", 
+static const char *SERVO_FUNCTIONS[] = {
+    "NONE", "RCPASS", "FLAP", "FLAP_AUTO", "AIL", "", "MNT_PAN", "MNT_TLT", "MNT_RLL", "MNT_OPEN",
     "CAM_TRG", "", "MNT2_PAN", "MNT2_TLT", "MNT2_RLL", "MNT2_OPEN", "DIF_SPL_L1", "DIF_SPL_R1", "", "ELE",
     "", "RUD", "SPR_PMP", "SPR_SPIN", "FLPRON_L", "FLPRON_R", "GRND_STEER", "PARACHT", "GRIP", "GEAR",
     "ENG_RUN_EN", "HELI_RSC", "HELI_TAIL_RSC", "MOT_1", "MOT_2", "MOT_3", "MOT_4", "MOT_5", "MOT_6", "MOT_7",
@@ -156,15 +158,14 @@ static const char* SERVO_FUNCTIONS[] = {
     "CAM_ISO", "CAM_APTR", "CAM_FOC", "CAM_SH_SPD", "SCRPT_1", "SCRPT_2", "SCRPT_3", "SCRPT_4", "SCRPT_5", "SCRPT_6",
     "SCRPT_7", "SCRPT_8", "SCRPT_9", "SCRPT_10", "SCRPT_11", "SCRPT_12", "SCRPT_13", "SCRPT_14", "SCRPT_15", "SCRPT_16",
     "", "", "", "", "", "", "", "", "", "",
-    "NEOPX_1", "NEOPX_2", "NEOPX_3", "NEOPX_4", "RAT_RLL", "RAT_PIT","RAT_THRST", "RAT_YAW", "WSAIL_EL", "PRLED_1",
-    "PRLED_2", "PRLED_3", "PRLED_CLK", "WNCH_CL"
-};
+    "NEOPX_1", "NEOPX_2", "NEOPX_3", "NEOPX_4", "RAT_RLL", "RAT_PIT", "RAT_THRST", "RAT_YAW", "WSAIL_EL", "PRLED_1",
+    "PRLED_2", "PRLED_3", "PRLED_CLK", "WNCH_CL"};
 
 #endif
 
 #if APM_BUILD_TYPE(APM_BUILD_ArduPlane)
 
-static const char* AUX_OPTIONS[] = {
+static const char *AUX_OPTIONS[] = {
     "NONE", "", "", "", "RTL", "", "", "", "", "CAM_TRG",
     "", "", "", "", "", "", "AUTO", "", "", "",
     "", "", "", "", "MIS_RST", "", "", "", "RLY", "LAND_GR",
@@ -173,43 +174,38 @@ static const char* AUX_OPTIONS[] = {
     "", "MANUAL", "", "", "", "GUIDE", "LOIT", "", "CLR_WP", "",
     "", "", "COMP_LRN", "", "REV_THR", "GPS_DIS", "RLY5", "RLY6", "", "",
     "", "", "CIRCLE", "", "", "", "", "TAKEOFF", "RCAM_CTL", "RCAM_OSD",
-    "", "DSARM", "QASS3POS", "", "AIR", "GEN", "TER_AUTO", "CROW_SEL", "SOAR", "", 
+    "", "DSARM", "QASS3POS", "", "AIR", "GEN", "TER_AUTO", "CROW_SEL", "SOAR", "",
     "", "", "", "", "", "", "", "", "", "",
-    "KILLIMU1", "KILLIMU2", "CAM_TOG", "", "", "GPSYAW_DIS"
-};
+    "KILLIMU1", "KILLIMU2", "CAM_TOG", "", "", "GPSYAW_DIS"};
 
-static const char* FLTMODES[] = {
+static const char *FLTMODES[] = {
     "MAN", "CIRC", "STAB", "TRAIN", "ACRO", "FBWA", "FBWB", "CRUISE", "ATUNE", "", "AUTO",
     "RTL", "LOIT", "TKOF", "ADSB", "GUID", "", "QSTAB", "QHOV", "QLOIT", "QLAND",
-    "QRTL", "QTUNE", "QACRO", "THRML", "L2QLND"
-};
+    "QRTL", "QTUNE", "QACRO", "THRML", "L2QLND"};
 
-static const char* FS_ACT[] = {
-    "NONE", "RTL", "LAND", "TERM", "QLAND", "PARA"
-};
+static const char *FS_ACT[] = {
+    "NONE", "RTL", "LAND", "TERM", "QLAND", "PARA"};
 
-static const char* FS_SHRT_ACTNS[] = {
-    "CRC_NOCHNGE", "CIRC", "FBWA", "DSABLE"
-};
+static const char *FS_SHRT_ACTNS[] = {
+    "CRC_NOCHNGE", "CIRC", "FBWA", "DSABLE"};
 
-static const char* FS_LNG_ACTNS[] = {
-    "CNTNUE", "RTL", "GLIDE", "PARACHT"
-};
+static const char *FS_LNG_ACTNS[] = {
+    "CNTNUE", "RTL", "GLIDE", "PARACHT"};
 
 // plane parameters
 const AP_OSD_ParamSetting::ParamMetadata AP_OSD_ParamSetting::_param_metadata[unsigned(AP_OSD_ParamSetting::Type::NUM_TYPES)] = {
-    { -1, AP_SerialManager::SerialProtocol_NumProtocols - 1,    1, ARRAY_SIZE(SERIAL_PROTOCOL_VALUES), SERIAL_PROTOCOL_VALUES },  // OSD_PARAM_SERIAL_PROTOCOL
-    { 0, SRV_Channel::k_nr_aux_servo_functions - 1,             1, ARRAY_SIZE(SERVO_FUNCTIONS), SERVO_FUNCTIONS },                // OSD_PARAM_SERVO_FUNCTION
-    { 0, 105, 1, ARRAY_SIZE(AUX_OPTIONS), AUX_OPTIONS },                        // OSD_PARAM_AUX_FUNCTION
-    { 0, 25, 1,  ARRAY_SIZE(FLTMODES), FLTMODES },                              // OSD_PARAM_FLIGHT_MODE
-    { 0, 5, 1,   ARRAY_SIZE(FS_ACT), FS_ACT },                                  // OSD_PARAM_FAILSAFE_ACTION
-    { 0, 3, 1,   ARRAY_SIZE(FS_SHRT_ACTNS), FS_SHRT_ACTNS },                    // OSD_PARAM_FAILSAFE_ACTION_1
-    { 0, 3, 1,   ARRAY_SIZE(FS_LNG_ACTNS), FS_LNG_ACTNS },                      // OSD_PARAM_FAILSAFE_ACTION_2
+    {-1, AP_SerialManager::SerialProtocol_NumProtocols - 1, 1, ARRAY_SIZE(SERIAL_PROTOCOL_VALUES), SERIAL_PROTOCOL_VALUES}, // OSD_PARAM_SERIAL_PROTOCOL
+    {0, SRV_Channel::k_nr_aux_servo_functions - 1, 1, ARRAY_SIZE(SERVO_FUNCTIONS), SERVO_FUNCTIONS},                        // OSD_PARAM_SERVO_FUNCTION
+    {0, 105, 1, ARRAY_SIZE(AUX_OPTIONS), AUX_OPTIONS},                                                                      // OSD_PARAM_AUX_FUNCTION
+    {0, 25, 1, ARRAY_SIZE(FLTMODES), FLTMODES},                                                                             // OSD_PARAM_FLIGHT_MODE
+    {0, 5, 1, ARRAY_SIZE(FS_ACT), FS_ACT},                                                                                  // OSD_PARAM_FAILSAFE_ACTION
+    {0, 3, 1, ARRAY_SIZE(FS_SHRT_ACTNS), FS_SHRT_ACTNS},                                                                    // OSD_PARAM_FAILSAFE_ACTION_1
+    {0, 3, 1, ARRAY_SIZE(FS_LNG_ACTNS), FS_LNG_ACTNS},                                                                      // OSD_PARAM_FAILSAFE_ACTION_2
 };
 
 #elif APM_BUILD_COPTER_OR_HELI
 
-static const char* AUX_OPTIONS[] = {
+static const char *AUX_OPTIONS[] = {
     "NONE", "", "FLIP", "SIMP", "RTL", "SAV_TRM", "", "SAV_WP", "", "CAM_TRG",
     "RNG", "FENCE", "", "SSIMP", "ACRO_TRN", "SPRAY", "AUTO", "AUTOTN", "LAND", "GRIP",
     "", "CHUTE_EN", "CHUTE_RL", "CHUTE_3P", "MIS_RST", "ATT_FF", "ATT_ACC", "RET_MNT", "RLY", "LAND_GR",
@@ -220,66 +216,59 @@ static const char* AUX_OPTIONS[] = {
     "AHOLD", "FHOLD", "CIRCLE", "DRIFT", "", "", "STANDBY", "", "RCAM_CTL", "RCAM_OSD",
     "VISO_CAL", "DISARM", "", "ZZ_Auto", "AIR", "", "", "", "", "",
     "", "", "", "", "", "", "", "", "", "",
-    "KILLIMU1", "KILLIMU2", "CAM_MOD_TOG", "", "", "GPSYAW_DIS"
-};
+    "KILLIMU1", "KILLIMU2", "CAM_MOD_TOG", "", "", "GPSYAW_DIS"};
 
-static const char* FLTMODES[] = {
+static const char *FLTMODES[] = {
     "STAB", "ACRO", "ALTHOLD", "AUTO", "GUIDED", "LOIT", "RTL", "CIRC", "", "LAND",
     "", "DRFT", "", "SPORT", "FLIP", "ATUN", "POSHLD", "BRAKE", "THROW", "AVD_ADSB",
     "GUID_NOGPS", "SMRTRTL", "FLOHOLD", "FOLLOW", "ZIGZAG", "SYSID", "HELI_ARO", "AUTORTL",
-    "TRTLE"
-};
+    "TRTLE"};
 
-static const char* FS_OPTIONS[] = {
+static const char *FS_OPTIONS[] = {
     "NONE", "CONT_RCFS", "CONT_GCSFS", "CONT_RC/GCSFS", "CONT_GUID_RC", "", "", "", "CONT_LAND", "",
-    "", "", "", "", "", "CONT_CTRL_GCS", "", "", "CONTNUE"
-};
+    "", "", "", "", "", "CONT_CTRL_GCS", "", "", "CONTNUE"};
 
-static const char* THR_FS_ACT[] = {
-    "NONE", "RTL", "CONT", "LAND", "SRTL_RTL", "SRTL_LAND"
-};
+static const char *THR_FS_ACT[] = {
+    "NONE", "RTL", "CONT", "LAND", "SRTL_RTL", "SRTL_LAND"};
 
-static const char* FS_ACT[] = {
-    "NONE", "LAND", "RTL", "SRTL_RTL", "SRTL_LAND", "TERM"
-};
+static const char *FS_ACT[] = {
+    "NONE", "LAND", "RTL", "SRTL_RTL", "SRTL_LAND", "TERM"};
 
 // copter parameters
 const AP_OSD_ParamSetting::ParamMetadata AP_OSD_ParamSetting::_param_metadata[unsigned(AP_OSD_ParamSetting::Type::NUM_TYPES)] = {
-    { -1, AP_SerialManager::SerialProtocol_NumProtocols - 1,    1, ARRAY_SIZE(SERIAL_PROTOCOL_VALUES), SERIAL_PROTOCOL_VALUES },  // OSD_PARAM_SERIAL_PROTOCOL
-    { 0, SRV_Channel::k_nr_aux_servo_functions - 1,             1, ARRAY_SIZE(SERVO_FUNCTIONS), SERVO_FUNCTIONS },                // OSD_PARAM_SERVO_FUNCTION
-    { 0, 105, 1, ARRAY_SIZE(AUX_OPTIONS), AUX_OPTIONS },                        // OSD_PARAM_AUX_FUNCTION
-    { 0, 28, 1,  ARRAY_SIZE(FLTMODES), FLTMODES },                              // OSD_PARAM_FLIGHT_MODE
-    { 0, 3, 1,   ARRAY_SIZE(FS_OPTIONS), FS_OPTIONS },                          // OSD_PARAM_FAILSAFE_ACTION
-    { 0, 5, 1,   ARRAY_SIZE(FS_ACT), FS_ACT },                                  // OSD_PARAM_FAILSAFE_ACTION_1
-    { 0, 5, 1,   ARRAY_SIZE(THR_FS_ACT), THR_FS_ACT },                          // OSD_PARAM_FAILSAFE_ACTION_2
+    {-1, AP_SerialManager::SerialProtocol_NumProtocols - 1, 1, ARRAY_SIZE(SERIAL_PROTOCOL_VALUES), SERIAL_PROTOCOL_VALUES}, // OSD_PARAM_SERIAL_PROTOCOL
+    {0, SRV_Channel::k_nr_aux_servo_functions - 1, 1, ARRAY_SIZE(SERVO_FUNCTIONS), SERVO_FUNCTIONS},                        // OSD_PARAM_SERVO_FUNCTION
+    {0, 105, 1, ARRAY_SIZE(AUX_OPTIONS), AUX_OPTIONS},                                                                      // OSD_PARAM_AUX_FUNCTION
+    {0, 28, 1, ARRAY_SIZE(FLTMODES), FLTMODES},                                                                             // OSD_PARAM_FLIGHT_MODE
+    {0, 3, 1, ARRAY_SIZE(FS_OPTIONS), FS_OPTIONS},                                                                          // OSD_PARAM_FAILSAFE_ACTION
+    {0, 5, 1, ARRAY_SIZE(FS_ACT), FS_ACT},                                                                                  // OSD_PARAM_FAILSAFE_ACTION_1
+    {0, 5, 1, ARRAY_SIZE(THR_FS_ACT), THR_FS_ACT},                                                                          // OSD_PARAM_FAILSAFE_ACTION_2
 };
 
 #else
 const AP_OSD_ParamSetting::ParamMetadata AP_OSD_ParamSetting::_param_metadata[unsigned(AP_OSD_ParamSetting::Type::NUM_TYPES)] = {};
 #endif
 
-extern const AP_HAL::HAL& hal;
+extern const AP_HAL::HAL &hal;
 
 // default constructor that just sets some sensible defaults that exist on all platforms
-AP_OSD_ParamSetting::AP_OSD_ParamSetting(uint8_t param_number) :
-    _param_number(param_number),
-    default_ypos(param_number + 1),
-    default_param_group(-1),
-    default_param_idx(-1),
-    default_param_key(-1)
+AP_OSD_ParamSetting::AP_OSD_ParamSetting(uint8_t param_number) : _param_number(param_number),
+                                                                 default_ypos(param_number + 1),
+                                                                 default_param_group(-1),
+                                                                 default_param_idx(-1),
+                                                                 default_param_key(-1)
 {
     AP_Param::setup_object_defaults(this, var_info);
 }
 
 // construct a setting from a compact static initializer structure
-AP_OSD_ParamSetting::AP_OSD_ParamSetting(const Initializer& initializer) :
-    _param_number(initializer.index),
-    default_enabled(true),
-    default_ypos(initializer.index + 1),
-    default_param_group(initializer.token.group_element),
-    default_param_idx(initializer.token.idx),
-    default_param_key(initializer.token.key),
-    default_type(float(initializer.type))
+AP_OSD_ParamSetting::AP_OSD_ParamSetting(const Initializer &initializer) : _param_number(initializer.index),
+                                                                           default_enabled(true),
+                                                                           default_ypos(initializer.index + 1),
+                                                                           default_param_group(initializer.token.group_element),
+                                                                           default_param_idx(initializer.token.idx),
+                                                                           default_param_key(initializer.token.key),
+                                                                           default_type(float(initializer.type))
 {
     AP_Param::setup_object_defaults(this, var_info);
 }
@@ -288,37 +277,43 @@ AP_OSD_ParamSetting::AP_OSD_ParamSetting(const Initializer& initializer) :
 void AP_OSD_ParamSetting::update()
 {
     // if the user has not made any changes then skip the update
-    if (PARAM_TOKEN_INDEX(_current_token) == PARAM_COMPOSITE_INDEX(_param_key, _param_idx, _param_group) && _param_key >= 0) {
+    if (PARAM_TOKEN_INDEX(_current_token) == PARAM_COMPOSITE_INDEX(_param_key, _param_idx, _param_group) && _param_key >= 0)
+    {
         return;
     }
     // if a parameter was configured then use that
-    _current_token = AP_Param::ParamToken {};
+    _current_token = AP_Param::ParamToken{};
     // surely there is a more efficient way than brute-force search
     for (_param = AP_Param::first(&_current_token, &_param_type);
-        _param && (AP_Param::get_persistent_key(_current_token.key) != uint16_t(_param_key.get())
-            || _current_token.idx != uint8_t(_param_idx.get())
-            || _current_token.group_element != uint32_t(_param_group.get()));
-        _param = AP_Param::next_scalar(&_current_token, &_param_type)) {
+         _param && (AP_Param::get_persistent_key(_current_token.key) != uint16_t(_param_key.get()) || _current_token.idx != uint8_t(_param_idx.get()) || _current_token.group_element != uint32_t(_param_group.get()));
+         _param = AP_Param::next_scalar(&_current_token, &_param_type))
+    {
     }
 
-    if (_param == nullptr) {
+    if (_param == nullptr)
+    {
         enabled.set(false);
-    } else {
+    }
+    else
+    {
         guess_ranges();
     }
 }
 
 // update parameter settings from the named parameter
-bool AP_OSD_ParamSetting::set_by_name(const char* name, uint8_t config_type, float pmin, float pmax, float pincr)
+bool AP_OSD_ParamSetting::set_by_name(const char *name, uint8_t config_type, float pmin, float pmax, float pincr)
 {
-    AP_Param::ParamToken token = AP_Param::ParamToken {};
+    AP_Param::ParamToken token = AP_Param::ParamToken{};
     ap_var_type type;
-    AP_Param* param = AP_Param::find_by_name(name, &type, &token);
+    AP_Param *param = AP_Param::find_by_name(name, &type, &token);
 
-    if (param == nullptr) {
+    if (param == nullptr)
+    {
         // leave unchanged
         return false;
-    } else {
+    }
+    else
+    {
         _current_token = token;
         _param_type = type;
         _param = param;
@@ -327,12 +322,15 @@ bool AP_OSD_ParamSetting::set_by_name(const char* name, uint8_t config_type, flo
 
     _type.set_and_save_ifchanged(config_type);
 
-    if (config_type == uint8_t(Type::NONE) && !is_zero(pincr)) {
+    if (config_type == uint8_t(Type::NONE) && !is_zero(pincr))
+    {
         // ranges
         _param_min.set_and_save_ifchanged(pmin);
         _param_max.set_and_save_ifchanged(pmax);
         _param_incr.set_and_save_ifchanged(pincr);
-    } else {
+    }
+    else
+    {
         guess_ranges(true);
     }
 
@@ -346,27 +344,33 @@ bool AP_OSD_ParamSetting::set_by_name(const char* name, uint8_t config_type, flo
 // only called when a change has been made
 void AP_OSD_ParamSetting::guess_ranges(bool force)
 {
-    if (_param->is_read_only()) {
+    if (_param->is_read_only())
+    {
         return;
     }
 
     // check for statically configured setting metadata
-    if (set_from_metadata()) {
+    if (set_from_metadata())
+    {
         return;
     }
 
     // nothing statically configured so guess some appropriate values
     float min = -1, max = 127, incr = 1;
 
-    if (_param != nullptr) {
-        switch (_param_type) {
+    if (_param != nullptr)
+    {
+        switch (_param_type)
+        {
         case AP_PARAM_INT8:
             break;
-        case AP_PARAM_INT16: {
-            AP_Int16* p = (AP_Int16*)_param;
+        case AP_PARAM_INT16:
+        {
+            AP_Int16 *p = (AP_Int16 *)_param;
             min = -1;
             uint8_t digits = 0;
-            for (int16_t int16p = p->get(); int16p > 0; int16p /= 10) {
+            for (int16_t int16p = p->get(); int16p > 0; int16p /= 10)
+            {
                 digits++;
             }
             incr = MAX(1, powf(10, digits - 2));
@@ -374,11 +378,13 @@ void AP_OSD_ParamSetting::guess_ranges(bool force)
             debug("Guessing range for value %d as %f -> %f, %f\n", p->get(), min, max, incr);
             break;
         }
-        case AP_PARAM_INT32: {
-            AP_Int32* p = (AP_Int32*)_param;
+        case AP_PARAM_INT32:
+        {
+            AP_Int32 *p = (AP_Int32 *)_param;
             min = -1;
             uint8_t digits = 0;
-            for (int32_t int32p = p->get(); int32p > 0; int32p /= 10) {
+            for (int32_t int32p = p->get(); int32p > 0; int32p /= 10)
+            {
                 digits++;
             }
             incr = MAX(1, powf(10, digits - 2));
@@ -386,26 +392,37 @@ void AP_OSD_ParamSetting::guess_ranges(bool force)
             debug("Guessing range for value %d as %f -> %f, %f\n", int(p->get()), min, max, incr);
             break;
         }
-        case AP_PARAM_FLOAT: {
-            AP_Float* p = (AP_Float*)_param;
+        case AP_PARAM_FLOAT:
+        {
+            AP_Float *p = (AP_Float *)_param;
 
             uint8_t digits = 0;
-            for (float floatp = p->get(); floatp > 1.0f; floatp /= 10) {
+            for (float floatp = p->get(); floatp > 1.0f; floatp /= 10)
+            {
                 digits++;
             }
             float floatp = p->get();
-            if (digits < 1) {
-                if (!is_zero(floatp)) {
+            if (digits < 1)
+            {
+                if (!is_zero(floatp))
+                {
                     incr = floatp * 0.01f; // move in 1% increments
-                } else {
+                }
+                else
+                {
                     incr = 0.01f; // move in absolute 1% increments
                 }
                 max = 1.0;
                 min = 0.0f;
-            } else {
-                if (!is_zero(floatp)) {
+            }
+            else
+            {
+                if (!is_zero(floatp))
+                {
                     incr = floatp * 0.01f; // move in 1% increments
-                } else {
+                }
+                else
+                {
                     incr = MAX(1, powf(10, digits - 2));
                 }
                 max = powf(10, digits + 1);
@@ -420,30 +437,37 @@ void AP_OSD_ParamSetting::guess_ranges(bool force)
             break;
         }
 
-        if (force || !_param_min.configured()) {
+        if (force || !_param_min.configured())
+        {
             _param_min.set(min);
         }
-        if (force || !_param_max.configured()) {
+        if (force || !_param_max.configured())
+        {
             _param_max.set(max);
         }
-        if (force || !_param_incr.configured()) {
+        if (force || !_param_incr.configured())
+        {
             _param_incr.set(incr);
         }
     }
 }
 
 // copy the name converting FOO_BAR_BAZ to FooBarBaz
-void AP_OSD_ParamSetting::copy_name_camel_case(char* name, size_t len) const
+void AP_OSD_ParamSetting::copy_name_camel_case(char *name, size_t len) const
 {
     char buf[17];
     _param->copy_name_token(_current_token, buf, 17);
     buf[16] = 0;
     name[0] = buf[0];
-    for (uint8_t i = 1, n = 1; i < len; i++, n++) {
-        if (buf[i] == '_') {
-            name[n] = buf[i+1];
+    for (uint8_t i = 1, n = 1; i < len; i++, n++)
+    {
+        if (buf[i] == '_')
+        {
+            name[n] = buf[i + 1];
             i++;
-        } else {
+        }
+        else
+        {
             name[n] = tolower(buf[i]);
         }
     }
@@ -452,7 +476,8 @@ void AP_OSD_ParamSetting::copy_name_camel_case(char* name, size_t len) const
 bool AP_OSD_ParamSetting::set_from_metadata()
 {
     // check for statically configured setting metadata
-    if (_type > 0 && _type < uint8_t(Type::NUM_TYPES) && _param_metadata[_type - 1].values_max > 0) {
+    if (_type > 0 && _type < uint8_t(Type::NUM_TYPES) && _param_metadata[_type - 1].values_max > 0)
+    {
         _param_incr.set(_param_metadata[_type - 1].increment);
         _param_min.set(_param_metadata[_type - 1].min_value);
         _param_max.set(_param_metadata[_type - 1].max_value);
@@ -470,16 +495,18 @@ void AP_OSD_ParamSetting::save_as_new()
     // the user has configured the range and increment, but the parameter
     // is no longer valid so reset these to guessed values
     guess_ranges(true);
-    if (_param_min.configured()) {
+    if (_param_min.configured())
+    {
         _param_min.save();
     }
-    if (_param_max.configured()) {
+    if (_param_max.configured())
+    {
         _param_max.save();
     }
-    if (_param_incr.configured()) {
+    if (_param_incr.configured())
+    {
         _param_incr.save();
     }
 }
 
 #endif // OSD_PARAM_ENABLED
-
