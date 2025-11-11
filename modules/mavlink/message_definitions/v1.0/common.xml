@@ -1577,6 +1577,26 @@
         <param index="1" label="First Item" minValue="0" increment="1">first_item: the first mission item to run</param>
         <param index="2" label="Last Item" minValue="0" increment="1">last_item:  the last mission item to run (after this item is run, the mission ends)</param>
       </entry>
+      <entry value="398" name="MAV_CMD_DO_HYDROGEN_CONTROL_CN" hasLocation="false" isDestination="false">
+        <description>Turn Chinese hydrogen fuel cell ON/OFF (single unit, no ID)</description>
+        <param index="1" label="Enable" units="bool">1 = On, 0 = Off</param>
+        <param index="2">Empty</param>
+        <param index="3">Empty</param>
+        <param index="4">Empty</param>
+        <param index="5">Empty</param>
+        <param index="6">Empty</param>
+        <param index="7">Empty</param>
+      </entry>
+      <entry value="399" name="MAV_CMD_DO_HYDROGEN_CONTROL" hasLocation="false" isDestination="false">
+        <description>Enable or disable hydrogen plant controller.</description>
+        <param index="1" label="ID" units="">Controller ID (0..255).</param>
+        <param index="2" label="Enable" units="">1 = On, 0 = Off.</param>
+        <param index="3">Empty.</param>
+        <param index="4">Empty.</param>
+        <param index="5">Empty.</param>
+        <param index="6">Empty.</param>
+        <param index="7">Empty.</param>
+      </entry>
       <entry value="400" name="MAV_CMD_COMPONENT_ARM_DISARM" hasLocation="false" isDestination="false">
         <description>Arms / Disarms a component</description>
         <param index="1" label="Arm" minValue="0" maxValue="1" increment="1">0: disarm, 1: arm</param>

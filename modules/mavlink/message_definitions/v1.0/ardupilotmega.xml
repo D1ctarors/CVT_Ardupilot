@@ -1889,5 +1889,37 @@
       <field type="uint16_t[4]" name="rpm" units="rpm">RPM (eRPM).</field>
       <field type="uint16_t[4]" name="count">count of telemetry packets received (wraps at 65535).</field>
     </message>
+    <message id="11045" name="HYDROGEN_PLANT">
+      <description>Message describing the state of a hydrogen plant</description>
+      <field type="int8_t" name="identifikator">ID Hydrogen plant.</field>
+      <field type="float" name="current" units="A">Current consumption in amperes.</field>
+      <field type="float" name="battery_voltage" units="V">Battery voltage.</field>
+      <field type="float" name="output_voltage" units="V">Output voltage.</field>
+      <field type="float" name="te_voltage" units="V">Thermal element voltage.</field>
+      <field type="uint32_t" name="runtime" units="s">Runtime.</field>
+      <field type="int16_t" name="pressure" units="hPa">Absolute pressure in hectopascals.</field>
+      <field type="int16_t" name="temperature_1" units="degC">Temperature 1.</field>
+      <field type="int16_t" name="temperature_2" units="degC">Temperature 2.</field>
+      <field type="uint8_t" name="fan" units="%">Fan PWM duty cycle.</field>
+      <field type="uint16_t" name="status">Status.</field>
+      <field type="uint16_t" name="errors">Errors.</field>
+      <field type="uint32_t" name="counter">Counter messages.</field>
+   </message>
+   <message id="11046" name="HYDROGEN_PLANT_CN">
+      <description>Telemetry from Chinese hydrogen fuel cell system (AP_HFC_CN)</description>
+      <field type="float" name="humidity_rh" units="%">Relative humidity</field>
+      <field type="float" name="fuelcell_voltage_v" units="V">Fuel cell voltage</field>
+      <field type="float" name="fuelcell_current_a" units="A">Fuel cell current</field>
+      <field type="float" name="fuelcell_temp1_c"  units="degC">Fuel cell temperature 1</field>
+      <field type="float" name="fuelcell_power_w"   units="W">Fuel cell power</field>
+      <field type="float" name="lb_voltage_v" units="V">Lithium battery voltage</field>
+      <field type="float" name="lb_current_a" units="A">Lithium battery current</field>
+      <field type="float" name="fuelcell_temp2_c" units="degC">Fuel cell temperature 2</field>
+      <field type="float" name="lb_power_w" units="W">Lithium battery power</field>
+      <field type="float" name="total_power_w"        units="W">Total output power</field>
+      <field type="float" name="hydrogen_pressure_mpa" units="MPa">Hydrogen pressure</field>
+      <field type="float" name="ambient_temp_c"        units="degC">Ambient temperature</field>
+   </message>
+
   </messages>
 </mavlink>
